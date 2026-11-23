@@ -40,7 +40,11 @@ const both = (a: string, b: string, type: string, data: unknown) => { emit(a, ty
 messagesRouter.get("/conversations", async (req, res) => {
   const me = auth(req).userId;
   const rows = await q(
+<<<<<<< HEAD
     `SELECT c.id AS conv_id, me.muted, ${PCOLS},
+=======
+    `SELECT c.id, me.muted, ${PCOLS},
+>>>>>>> f8715a6f1b52440c478dede05618a6e4763721ff
        lm.id AS last_id, lm.sender_id AS last_sender, lm.body AS last_body, lm.deleted_at AS last_deleted, lm.created_at AS last_at, lm.gif_url AS last_gif, lm.att_kind,
        (SELECT count(*) FROM messages m2 WHERE m2.conversation_id=c.id AND m2.sender_id<>$1 AND m2.deleted_at IS NULL AND m2.created_at>me.last_read_at AND m2.created_at>me.cleared_at)::int AS unread
      FROM conversation_members me
@@ -51,7 +55,11 @@ messagesRouter.get("/conversations", async (req, res) => {
                         FROM messages WHERE conversation_id=c.id AND created_at>me.cleared_at ORDER BY created_at DESC LIMIT 1) lm ON true
      WHERE me.user_id=$1 AND NOT me.hidden AND u.deleted_at IS NULL
      ORDER BY COALESCE(lm.created_at, c.created_at) DESC`, [me]);
+<<<<<<< HEAD
   res.json(rows.map((r) => ({ id: r.conv_id, user: person(r), unread: r.unread, muted: r.muted,
+=======
+  res.json(rows.map((r) => ({ id: r.id, user: person(r), unread: r.unread, muted: r.muted,
+>>>>>>> f8715a6f1b52440c478dede05618a6e4763721ff
     last: r.last_id ? { id: r.last_id, senderId: r.last_sender, body: r.last_deleted ? null : r.last_body, createdAt: r.last_at, deleted: !!r.last_deleted,
       kind: r.last_deleted ? null : r.last_gif ? "gif" : r.att_kind } : null })));
 });

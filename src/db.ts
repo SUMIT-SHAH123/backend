@@ -1,4 +1,5 @@
 import pg from "pg";
+<<<<<<< HEAD
 
 const raw = process.env.DATABASE_URL ?? "";
 let host = "";
@@ -12,6 +13,9 @@ function clean(u: string) {
   try { const x = new URL(u); x.searchParams.delete("sslmode"); x.searchParams.delete("channel_binding"); return x.toString(); } catch { return u; }
 }
 export const pool = new pg.Pool({ connectionString: clean(raw), ssl, max: 10 });
+=======
+export const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+>>>>>>> f8715a6f1b52440c478dede05618a6e4763721ff
 export async function q<T = any>(text: string, params: any[] = []): Promise<T[]> {
   return (await pool.query(text, params)).rows as T[];
 }

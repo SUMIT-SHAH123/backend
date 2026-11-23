@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+<<<<<<< HEAD
 
 const smtp = process.env.SMTP_HOST
   ? nodemailer.createTransport({ host: process.env.SMTP_HOST, port: Number(process.env.SMTP_PORT ?? 587), auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } })
@@ -33,4 +34,20 @@ export async function sendMail(to: string, subject: string, text: string) {
   } catch (e) {
     console.error("[mail] send failed:", e instanceof Error ? e.message : e); // never crash a request because email failed
   }
+=======
+const transport = process.env.SMTP_HOST
+  ? nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT ?? 587),
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    })
+  : null;
+
+export async function sendMail(to: string, subject: string, text: string) {
+  if (!transport) {
+    console.log(`\n[DEV MAIL] to=${to}\n${subject}\n${text}\n`);
+    return;
+  }
+  await transport.sendMail({ from: process.env.MAIL_FROM, to, subject, text });
+>>>>>>> f8715a6f1b52440c478dede05618a6e4763721ff
 }

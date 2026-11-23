@@ -61,10 +61,17 @@ callsRouter.get("/calls/ice-servers", (req, res) => {
 });
 callsRouter.get("/calls", async (req, res) => {
   const me = auth(req).userId;
+<<<<<<< HEAD
   const rows = await q(`SELECT c.id AS call_id,c.kind,c.status AS call_status,c.created_at AS call_created,c.answered_at,c.ended_at,(c.caller_id=$1) AS outgoing, ${PCOLS}
     FROM calls c JOIN users u ON u.id = CASE WHEN c.caller_id=$1 THEN c.callee_id ELSE c.caller_id END
     WHERE (c.caller_id=$1 OR c.callee_id=$1) AND c.status<>'ringing' ORDER BY c.created_at DESC LIMIT 50`, [me]);
   res.json(rows.map((r) => ({ id: r.call_id, kind: r.kind, status: r.call_status, outgoing: r.outgoing, createdAt: r.call_created, user: person(r),
+=======
+  const rows = await q(`SELECT c.id,c.kind,c.status,c.created_at,c.answered_at,c.ended_at,(c.caller_id=$1) AS outgoing, ${PCOLS}
+    FROM calls c JOIN users u ON u.id = CASE WHEN c.caller_id=$1 THEN c.callee_id ELSE c.caller_id END
+    WHERE (c.caller_id=$1 OR c.callee_id=$1) AND c.status<>'ringing' ORDER BY c.created_at DESC LIMIT 50`, [me]);
+  res.json(rows.map((r) => ({ id: r.id, kind: r.kind, status: r.status, outgoing: r.outgoing, createdAt: r.created_at, user: person(r),
+>>>>>>> f8715a6f1b52440c478dede05618a6e4763721ff
     durationSec: r.answered_at && r.ended_at ? Math.max(0, Math.round((new Date(r.ended_at).getTime() - new Date(r.answered_at).getTime()) / 1000)) : 0 })));
 });
 void ApiError;

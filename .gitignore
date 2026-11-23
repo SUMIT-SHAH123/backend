@@ -6,7 +6,10 @@
 # Node / Backend
 node_modules/
 
+<<<<<<< HEAD
 
 # Build output / uploads
 dist/
 uploads/
+=======
+>>>>>>> f8715a6f1b52440c478dede05618a6e4763721ff

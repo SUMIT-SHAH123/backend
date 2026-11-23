@@ -5,11 +5,19 @@ import argon2 from "argon2";
 import { OAuth2Client } from "google-auth-library";
 import { z } from "zod";
 import { pool, q } from "./db.js";
+<<<<<<< HEAD
 import { mailMode, sendMail } from "./mail.js";
 import { ApiError, auth, newRefreshToken, requireAuth, sha256, signAccess } from "./security.js";
 
 export const authRouter = Router();
 const strict = rateLimit({ windowMs: 15 * 60_000, limit: 40, standardHeaders: true });
+=======
+import { sendMail } from "./mail.js";
+import { ApiError, auth, newRefreshToken, requireAuth, sha256, signAccess } from "./security.js";
+
+export const authRouter = Router();
+const strict = rateLimit({ windowMs: 15 * 60_000, limit: 20, standardHeaders: true });
+>>>>>>> f8715a6f1b52440c478dede05618a6e4763721ff
 const google = new OAuth2Client();
 
 const username = z.string().trim().toLowerCase().regex(/^[a-z0-9_]{3,20}$/, "Username must be 3-20 letters, numbers or underscores.");
@@ -115,10 +123,13 @@ authRouter.post("/auth/register", strict, async (req, res) => {
     }
     throw e;
   } finally { client.release(); }
+<<<<<<< HEAD
   if (mailMode === "none") { // no way to send email on this server: verify automatically so people aren't locked out
     await q("UPDATE users SET email_verified=true WHERE id=$1", [userId]);
     return void res.status(201).json({ ...(await issueSession(req, userId, true)), verificationRequired: false });
   }
+=======
+>>>>>>> f8715a6f1b52440c478dede05618a6e4763721ff
   await sendCode(userId, b.email, "verify_email");
   res.status(201).json({ email: b.email, message: "Account created. Enter the code we emailed you." });
 });
@@ -145,7 +156,10 @@ authRouter.post("/auth/login", strict, async (req, res) => {
     "SELECT * FROM users WHERE deleted_at IS NULL AND (email=$1 OR username=$1 OR sumx_id=$1) LIMIT 1", [b.identifier]);
   const fail = new ApiError(401, "INVALID_CREDENTIALS", "Incorrect login or password.");
   if (!u || !u.password_hash || !(await argon2.verify(u.password_hash, b.password))) throw fail;
+<<<<<<< HEAD
   if (!u.email_verified && mailMode === "none") { await q("UPDATE users SET email_verified=true WHERE id=$1", [u.id]); u.email_verified = true; }
+=======
+>>>>>>> f8715a6f1b52440c478dede05618a6e4763721ff
   if (!u.email_verified) {
     await sendCode(u.id, u.email, "verify_email");
     throw new ApiError(403, "EMAIL_NOT_VERIFIED", "Verify your email first. We sent a new code.");
